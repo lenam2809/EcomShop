@@ -52,10 +52,11 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddSingleton<ITokenGenerator>(new TokenGenerator(_key, _issuer, _audience, _expirtyMinutes));
 
 // Include Infrastructur Dependency
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Configuration for Sqlite
-builder.Services.AddDbContext<EcomShopContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
+// Configuration for SqlServer
+//builder.Services.AddDbContext<EcomShopContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
 
 // Register dependencies
 builder.Services.AddMediatR(typeof(CreateCustomerCommandHandler).GetTypeInfo().Assembly);

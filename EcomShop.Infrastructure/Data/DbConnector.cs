@@ -24,7 +24,7 @@ namespace EcomShop.Infrastructure.Data
 
         public IDbConnection CreateConnection()
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string connectionString = _configuration.GetConnectionString("ConnStr");
             return new SqlConnection(connectionString);
         }
 
