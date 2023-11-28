@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using EcomShop.Infrastructure.Identity;
 using EcomShop.Application.Common.Interfaces;
-using FluentValidation;
+using EcomShop.Application.Common.Exceptions;
 
 namespace EcomShop.Infrastructure.Services
 {
@@ -25,7 +25,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
             }
 
             var result = await _userManager.AddToRolesAsync(user, roles);
@@ -37,7 +37,7 @@ namespace EcomShop.Infrastructure.Services
             var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
             if (!result.Succeeded)
             {
-                throw new ValidationException((IEnumerable<FluentValidation.Results.ValidationFailure>)result.Errors);
+                throw new ValidationException(result.Errors);
             }
             return result.Succeeded;
         }
@@ -57,13 +57,13 @@ namespace EcomShop.Infrastructure.Services
 
             if (!result.Succeeded)
             {
-                throw new ValidationException((IEnumerable<FluentValidation.Results.ValidationFailure>)result.Errors);
+                throw new ValidationException(result.Errors);
             }
 
             var addUserRole = await _userManager.AddToRolesAsync(user, roles);
             if (!addUserRole.Succeeded)
             {
-                throw new ValidationException((IEnumerable<FluentValidation.Results.ValidationFailure>)addUserRole.Errors);
+                throw new ValidationException(addUserRole.Errors);
             }
             return (result.Succeeded, user.Id);
         }
@@ -73,17 +73,17 @@ namespace EcomShop.Infrastructure.Services
             var roleDetails = await _roleManager.FindByIdAsync(roleId);
             if (roleDetails == null)
             {
-                throw new InvalidOperationException("Role not found");
+                throw new NotFoundException("Role not found");
             }
 
             if (roleDetails.Name == "Administrator")
             {
-                throw new InvalidOperationException("You can not delete Administrator Role");
+                throw new BadRequestException("You can not delete Administrator Role");
             }
             var result = await _roleManager.DeleteAsync(roleDetails);
             if (!result.Succeeded)
             {
-                throw new ValidationException((IEnumerable<FluentValidation.Results.ValidationFailure>)result.Errors);
+                throw new ValidationException(result.Errors);
             }
             return result.Succeeded;
         }
@@ -93,7 +93,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
                 //throw new Exception("User not found");
             }
 
@@ -145,7 +145,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
             }
             var roles = await _userManager.GetRolesAsync(user);
             return (user.Id, user.FullName, user.UserName, user.Email, roles);
@@ -156,7 +156,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
             }
             var roles = await _userManager.GetRolesAsync(user);
             return (user.Id, user.FullName, user.UserName, user.Email, roles);
@@ -167,7 +167,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == userName);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
                 //throw new Exception("User not found");
             }
             return await _userManager.GetUserIdAsync(user);
@@ -178,7 +178,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
                 //throw new Exception("User not found");
             }
             return await _userManager.GetUserNameAsync(user);
@@ -189,7 +189,7 @@ namespace EcomShop.Infrastructure.Services
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
             }
             var roles = await _userManager.GetRolesAsync(user);
             return roles.ToList();
@@ -201,7 +201,7 @@ namespace EcomShop.Infrastructure.Services
 
             if (user == null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new NotFoundException("User not found");
             }
             return await _userManager.IsInRoleAsync(user, role);
         }

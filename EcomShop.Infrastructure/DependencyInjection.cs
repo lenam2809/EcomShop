@@ -27,7 +27,8 @@ namespace EcomShop.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<EcomShopContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+
+            services.AddDbContext<EcomShopContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr"),
                 b => b.MigrationsAssembly(typeof(EcomShopContext).Assembly.FullName)
                 ));
 
